@@ -1,6 +1,7 @@
 'use strict';
 
 const AWS = require('aws-sdk');
+const sizeOf = require('image-size');
 const S3 = new AWS.S3({
   signatureVersion: 'v4',
 });
@@ -17,10 +18,18 @@ exports.handler = function(event, context, callback) {
   const originalKey = match[3];
 
   S3.getObject({Bucket: BUCKET, Key: originalKey}).promise()
-    .then(data => Sharp(data.Body)
-      .resize(maxWidth, maxHeight).max().withoutEnlargement()
-      .toFormat('png')
-      .toBuffer()
+    .then(data => {
+        let img = Sharp(data.Body);
+
+        const dimensions = sizeOf(data.Body);
+
+        if (dimensions.width > maxWidth || dimensions.height > maxHeight) {
+          img = img.resize(maxWidth, maxHeight).max();
+        }
+
+        return img.toFormat('png')
+        .toBuffer()
+      }
     )
     .then(buffer => S3.putObject({
         Body: buffer,
@@ -36,4 +45,4 @@ exports.handler = function(event, context, callback) {
       })
     )
     .catch(err => callback(err))
-}
+};
