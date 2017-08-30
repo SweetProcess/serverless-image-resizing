@@ -10,16 +10,26 @@ const Sharp = require('sharp');
 const BUCKET = process.env.BUCKET;
 const URL = process.env.URL;
 
+const extMapper = {
+  'jpg': 'jpeg',
+  'svg': 'png',
+  'gif': 'png',
+};
+
 exports.handler = function(event, context, callback) {
   const key = event.queryStringParameters.key;
-  console.info('key', key);
   const match = key.match(/(.*)\/(\d+)x(\d+)\/(.*)/);
-  console.info(match);
   const maxWidth = parseInt(match[2], 10);
   const maxHeight = parseInt(match[3], 10);
   const originalKey = match[1] + '/' + match[4];
 
-  console.info(maxWidth, maxHeight, originalKey);
+  const splitted = match[4].split('.');
+
+  let ext = splitted[splitted.length - 1];
+
+  if (extMapper[ext]) {
+    ext = extMapper[ext];
+  }
 
   S3.getObject({Bucket: BUCKET, Key: originalKey}).promise()
     .then(data => {
@@ -31,13 +41,13 @@ exports.handler = function(event, context, callback) {
           img = img.resize(maxWidth, maxHeight).max();
         }
 
-        return img.toFormat('png').toBuffer();
+        return img.toFormat(ext).toBuffer();
       }
     )
     .then(buffer => S3.putObject({
         Body: buffer,
         Bucket: BUCKET,
-        ContentType: 'image/png',
+        ContentType: 'image/' + ext,
         Key: key,
       }).promise()
     )
