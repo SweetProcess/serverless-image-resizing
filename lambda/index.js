@@ -9,6 +9,7 @@ const Sharp = require('sharp');
 
 const BUCKET = process.env.BUCKET;
 const URL = process.env.URL;
+const PREFIX = process.env.PREFIX;
 
 const extMapper = {
   'jpg': 'jpeg',
@@ -17,7 +18,7 @@ const extMapper = {
 };
 
 exports.handler = function(event, context, callback) {
-  const key = event.queryStringParameters.key;
+  const key = PREFIX + event.queryStringParameters.key;
   const match = key.match(/(.*)\/(\d+)x(\d+)\/(.*)/);
   const maxWidth = parseInt(match[2], 10);
   const maxHeight = parseInt(match[3], 10);
