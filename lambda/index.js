@@ -10,6 +10,7 @@ const Sharp = require('sharp');
 const BUCKET = process.env.BUCKET;
 const URL = process.env.URL;
 const PREFIX = process.env.PREFIX;
+const DEFAULT_EXT = 'png';
 
 const extMapper = {
   'jpg': 'jpeg',
@@ -24,13 +25,8 @@ exports.handler = function(event, context, callback) {
   const maxHeight = parseInt(match[3], 10);
   const originalKey = match[1] + '/' + match[4];
 
-  const splitted = match[4].split('.');
-
-  let ext = splitted[splitted.length - 1];
-
-  if (extMapper[ext]) {
-    ext = extMapper[ext];
-  }
+  let ext = match[4].split('.').pop().toLowerCase();
+  ext = extMapper[ext] || DEFAULT_EXT;
 
   S3.getObject({Bucket: BUCKET, Key: originalKey}).promise()
     .then(data => {
