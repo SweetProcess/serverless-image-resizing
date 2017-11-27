@@ -47,6 +47,8 @@ exports.handler = function(event, context, callback) {
         ContentType: 'image/' + ext,
         CacheControl: 'public, max-age=31557600',
         Key: key,
+        ServerSideEncryption: "AES256",
+        ACL: "public-read",
       }).promise()
     )
     .then(() => callback(null, {
