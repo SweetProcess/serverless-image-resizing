@@ -4,14 +4,14 @@ ADD etc/nodesource.gpg.key /etc
 
 WORKDIR /tmp
 
-RUN yum -y install gcc-c++ && \
-    rpm --import /etc/nodesource.gpg.key && \
-    curl --location --output ns.rpm https://rpm.nodesource.com/pub_8.x/el/7/x86_64/nodejs-8.10.0-1nodesource.x86_64.rpm && \
-    rpm --checksig ns.rpm && \
-    rpm --install --force ns.rpm && \
-    npm install -g npm@latest && \
+COPY lambda/* ./
+
+RUN curl --silent --location https://rpm.nodesource.com/setup_8.x | bash && \
+    yum -y install nodejs gcc-c++ make git sed tar which && \
+    npm i -g n && \
+    n 8.10 && \
+    npm install && \
     npm cache clean --force && \
-    yum clean all && \
-    rm --force ns.rpm
+    yum clean all
 
 WORKDIR /build
