@@ -45,7 +45,7 @@ Resizes images on the fly using Amazon S3, AWS Lambda, and Amazon API Gateway. U
         - https://d3fk7i16sd7hmm.cloudfront.net/site_media/media/999x999/19s10/642/96385bbb/apollo_earth.png
         - https://d3fk7i16sd7hmm.cloudfront.net/site_media/media/999x99/19s10/642/96385bbb/apollo_earth.png
 	
-	**WARNING: ** before you start checking all of those resized images, make sure that those resize folders
+	**WARNING:** before you start checking all of those resized images, make sure that those resize folders
 	do not exist. This is all because lambda is triggered only when s3 will point to a 404, and lambda will
 	create the image. Be sure to reload those test folders, or you will not even go to the lambda function.
 	
