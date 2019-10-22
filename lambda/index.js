@@ -35,7 +35,7 @@ exports.handler = function(event, context, callback) {
         const dimensions = sizeOf(data.Body);
 
         if (dimensions.width > maxWidth || dimensions.height > maxHeight) {
-          img = img.resize(maxWidth, maxHeight).max();
+          img = img.resize(maxWidth, maxHeight, {fit: 'inside', withoutEnlargement: true});
         }
 
         return img.toFormat(ext).toBuffer();
